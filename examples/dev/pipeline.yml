@@ -1,0 +1,77 @@
+resource_types:
+  - name: concourse-contentful-webhooks
+    type: docker-image
+    source:
+      repository: bigorangemachine/concourse-contentful-webhooks
+      tag: v1
+
+resources:
+  - name: git-the-website-develop
+    type: git
+    source:
+      uri: git@github.com:USER/REPO
+      branch: develop
+      private_key: ((github-private-key))
+  - name: cc-hooks
+    type: concourse-contentful-webhooks
+    webhook_token: abc123
+    source:
+      foo: baz
+
+jobs:
+  - name: hello-world
+    plan:
+      - task: say-hello
+        config:
+          platform: linux
+          run:
+            path: echo
+            args: ["Hello, world!"]
+
+  - name: git-check
+    plan:
+      - get: git-the-website-develop
+        trigger: true
+      - task: build-test
+        input_mapping:
+          built-tmp: built-ws
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: node
+              tag: '8-alpine'
+          inputs:
+            - name: built-tmp
+          run:
+            path: sh
+            args:
+            - -exc
+            - |
+              ls -la built-tmp
+              ls -la built-tmp/build
+
+  - name: webhook-check
+    plan:
+      - get: cc-hooks
+        trigger: true
+      - task: build-test
+        input_mapping:
+          built-tmp: built-ws
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: node
+              tag: '8-alpine'
+          inputs:
+            - name: built-tmp
+          run:
+            path: sh
+            args:
+            - -exc
+            - |
+              ls -la built-tmp
+              ls -la built-tmp/build

@@ -1,0 +1,49 @@
+resource_types:
+  - name: concourse-contentful-webhooks
+    type: docker-image
+    source:
+      repository: bigorangemachine/concourse-contentful-webhooks
+      tag: latest
+
+resources:
+  - name: cc-hooks
+    type: concourse-contentful-webhooks
+    webhook_token: abc123
+    source:
+      environment: master
+      space-id: zxxr4f7rc9lz
+      access-token: 1010ffeebbccddee00112233445566778899aabbccddeeff0011223344556677
+
+jobs:
+  - name: hello-world
+    plan:
+      - task: say-hello
+        config:
+          platform: linux
+          run:
+            path: echo
+            args: ["Hello, world!"]
+
+  - name: webhook-check
+    plan:
+      - get: cc-hooks
+        trigger: true
+      - task: say-hello-2
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: busybox
+          run:
+            path: echo
+            args: ["Hello, world!"]
+      - task: say-hello-3
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: busybox
+          run:
+            path: printenv

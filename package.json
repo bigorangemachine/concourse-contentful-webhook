@@ -1,0 +1,22 @@
+{
+  "name": "concourse-contentful-webhook",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bigorangemachine/concourse-contentful-webhook.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bigorangemachine/concourse-contentful-webhook/issues"
+  },
+  "homepage": "https://github.com/bigorangemachine/concourse-contentful-webhook#readme",
+  "dependencies": {
+    "contentful": "^6.1.1"
+  }
+}
