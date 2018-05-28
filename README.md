@@ -1,3 +1,5 @@
+Readme.md is WIP!
+
 # Install
 
 `./init.sh`
