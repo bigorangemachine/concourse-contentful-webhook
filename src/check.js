@@ -19,7 +19,7 @@ jsonStdin()
         const highestRevision = response.items.reverse()[0]; // highest 'sys.revision' first
         const updatedTimestamp = Date.parse(highestRevision.sys.updatedAt);
 
-        if(!result.version || parseFloat(result.version.revisionNum) < parseFloat(updatedTimestamp)) {
+        if(!result.version || result.version.revisionNum < updatedTimestamp) {
           jsonStdout([{
             timestamp: highestRevision.sys.updatedAt,
             revisionNum: updatedTimestamp,
