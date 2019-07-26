@@ -14,13 +14,15 @@ jsonStdin()
       accessToken: accessToken
     });
 
-    return contentfulClient.getEntries({ order: '-sys.revision', limit: 1 })
+    return contentfulClient.getEntries({ order: '-sys.updatedAt', limit: 1 })
       .then((response) => {
         const highestRevision = response.items.reverse()[0]; // highest 'sys.revision' first
-        if(!result.version || parseFloat(result.version.revisionNum) < parseFloat(highestRevision.sys.revision)) {
+        const updatedTimestamp = Date.parse(highestRevision.sys.updatedAt);
+
+        if(!result.version || parseFloat(result.version.revisionNum) < parseFloat(updatedTimestamp)) {
           jsonStdout([{
             timestamp: highestRevision.sys.updatedAt,
-            revisionNum: highestRevision.sys.revision.toString(),
+            revisionNum: updatedTimestamp,
             spaceId,
             environment: contentfulEnv
           }]);
