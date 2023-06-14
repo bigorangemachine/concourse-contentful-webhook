@@ -14,6 +14,28 @@ jsonStdin()
       accessToken: accessToken
     });
 
+    // As this var is only set in the relevant places
+    const isContentReview = result.source['content-review'];
+
+    if (isContentReview) {
+      return contentfulClient.getEntries({
+        // See https://www.contentfulcommunity.com/t/how-to-query-on-multiple-content-types/473 and
+        // https://www.contentful.com/faq/apis/#:~:text=You%20could-,use,-the%20inclusion%20operator
+        'sys.contentType.sys.id[in]': 'newsArticle,person,pagePartner,pageDefault,landingPage'
+      }).then((response) => {
+        
+        if(Boolean(response.items.length)) {
+          jsonStdout([{
+            stuffToReview: JSON.stringify(response.items),
+          }]);
+        } else {
+          jsonStdout([]);
+        }
+      });
+    } else {
+
+    }
+
     return contentfulClient.getEntries({ order: '-sys.updatedAt', limit: 1 })
       .then((response) => {
         const highestRevision = response.items.reverse()[0]; // highest 'sys.revision' first
