@@ -46,7 +46,7 @@ jsonStdin()
             revisionNum: updatedTimestamp.toString(),
             spaceId,
             environment: contentfulEnv,
-            testing: 'test-string'
+            testing3: 'test-string-3'
           }]);
         } else {
           jsonStdout([]);
