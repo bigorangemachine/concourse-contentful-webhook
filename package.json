@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/bigorangemachine/concourse-contentful-webhook#readme",
   "dependencies": {
-    "contentful": "^6.1.1"
+    "contentful": "^6.1.1",
+    "slack-notify": "^2.0.6"
   }
 }
