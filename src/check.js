@@ -27,9 +27,15 @@ jsonStdin()
         if(Boolean(response.items.length)) {
           jsonStdout([{
             stuffToReview: JSON.stringify(response.items),
+            contentReview: 'testing-content--some-content',
           }]);
         } else {
           jsonStdout([{
+            timestamp: highestRevision.sys.updatedAt,
+            revisionNum: updatedTimestamp.toString(),
+            spaceId,
+            environment: contentfulEnv,
+            contentReview: 'testing-content--no-content',
             stuffToReview: "nothing to see"
           }]);
         }
@@ -46,10 +52,13 @@ jsonStdin()
             revisionNum: updatedTimestamp.toString(),
             spaceId,
             environment: contentfulEnv,
-            testing3: 'test-string-3'
+            contentReview: 'testing-content--false',
           }]);
         } else {
-          jsonStdout([]);
+          jsonStdout([{
+            notExactlySure: 'what-is-going-on',
+            contentReview: 'testing-content--false',
+          }]);
         }
       });
     }

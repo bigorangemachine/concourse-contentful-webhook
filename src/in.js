@@ -7,14 +7,14 @@ jsonStdin()
     const { version } = result;
     jsonStdout({
       version: {
-        revision: `${version.environment}-${version.spaceId}-${version.revisionNum}-${version.timestamp}`
+        revision: `${version.environment}-${version.spaceId}-${version.revisionNum}-${version.timestamp}-content-${version.contentReview}`
       },
       metadata: [
         { name: "environment", value: version.environment },
         { name: "space-id", value: version.spaceId },
         { name: "revision", value: version.revisionNum },
         { name: "contentful-timestamp", value: version.timestamp },
-        { name: "testing3", value: version.testing3 }
+        { name: "content-review", value: version.contentReview }
       ]
     });
   })
