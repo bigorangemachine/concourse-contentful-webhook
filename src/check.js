@@ -15,9 +15,10 @@ jsonStdin()
     });
 
     // As this is only set the CRcom review context
-    const isContentReview = result.source['content-review'];
+    const isContentReview = result.source['content-review'] || result.source.content_review;
 
     if (isContentReview) {
+      console.log('content-review:')
       return contentfulClient.getEntries({
         // See https://www.contentfulcommunity.com/t/how-to-query-on-multiple-content-types/473 and
         // https://www.contentful.com/faq/apis/#:~:text=You%20could-,use,-the%20inclusion%20operator
@@ -28,7 +29,9 @@ jsonStdin()
             stuffToReview: JSON.stringify(response.items),
           }]);
         } else {
-          jsonStdout([]);
+          jsonStdout([{
+            stuffToReview: "nothing to see"
+          }]);
         }
       });
     } else {
