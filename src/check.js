@@ -14,7 +14,7 @@ jsonStdin()
       accessToken: accessToken
     });
 
-    // As this var is only set in the relevant places
+    // As this is only set the CRcom review context
     const isContentReview = result.source['content-review'];
 
     if (isContentReview) {
@@ -23,7 +23,6 @@ jsonStdin()
         // https://www.contentful.com/faq/apis/#:~:text=You%20could-,use,-the%20inclusion%20operator
         'sys.contentType.sys.id[in]': 'newsArticle,person,pagePartner,pageDefault,landingPage'
       }).then((response) => {
-        
         if(Boolean(response.items.length)) {
           jsonStdout([{
             stuffToReview: JSON.stringify(response.items),
@@ -33,10 +32,7 @@ jsonStdin()
         }
       });
     } else {
-
-    }
-
-    return contentfulClient.getEntries({ order: '-sys.updatedAt', limit: 1 })
+      return contentfulClient.getEntries({ order: '-sys.updatedAt', limit: 1 })
       .then((response) => {
         const highestRevision = response.items.reverse()[0]; // highest 'sys.revision' first
         const updatedTimestamp = Date.parse(highestRevision.sys.updatedAt);
@@ -46,12 +42,14 @@ jsonStdin()
             timestamp: highestRevision.sys.updatedAt,
             revisionNum: updatedTimestamp.toString(),
             spaceId,
-            environment: contentfulEnv
+            environment: contentfulEnv,
+            testing: 'test-string'
           }]);
         } else {
           jsonStdout([]);
         }
       });
+    }
   })
   .catch((err) => {
     // logError(err);
