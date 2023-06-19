@@ -14,10 +14,10 @@ docker image ls # get the docker sha
 docker run -i -t <DOCKER-IMAGE-ID> /bin/ash # run interactive
 docker build -t concourse-contentful-webhooks:v1 .
 docker ps -a # get the docker container id
-docker commit -m "first commit" -a "bigorangemachine" <DOCKER-CONTAINER-ID> bigorangemachine/concourse-contentful-webhooks
-docker push bigorangemachine/concourse-contentful-webhooks
-docker tag <DOCKER-IMAGE-ID> bigorangemachine/concourse-contentful-webhooks:v1
-docker push bigorangemachine/concourse-contentful-webhooks:v1
+docker commit -m "first commit" -a "comicrelief" <DOCKER-CONTAINER-ID> comicrelief/concourse-contentful-webhooks
+docker push comicrelief/concourse-contentful-webhooks
+docker tag <DOCKER-IMAGE-ID> comicrelief/concourse-contentful-webhooks:v1
+docker push comicrelief/concourse-contentful-webhooks:v1
 ```
 
 ## Build Dockerfile
@@ -115,7 +115,7 @@ resource_types:
   - name: concourse-contentful-webhooks
     type: docker-image
     source:
-      repository: bigorangemachine/concourse-contentful-webhooks
+      repository: comicrelief/concourse-contentful-webhooks
 ...
 ```
 
@@ -147,7 +147,7 @@ resource_types:
   - name: concourse-contentful-webhooks
     type: docker-image
     source:
-      repository: bigorangemachine/concourse-contentful-webhooks
+      repository: comicrelief/concourse-contentful-webhooks
 
 resources:
   - name: contentful-hook
