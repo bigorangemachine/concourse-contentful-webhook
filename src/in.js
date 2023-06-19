@@ -13,7 +13,7 @@ jsonStdin()
         { name: "environment", value: version.environment },
         { name: "space-id", value: version.spaceId },
         { name: "revision", value: version.revisionNum },
-        { name: "contentful-timestamp", value: version.timestamp }
+        { name: "contentful-timestamp", value: version.timestamp },
         { name: "testing2", value: "test-string2" }
       ]
     });
