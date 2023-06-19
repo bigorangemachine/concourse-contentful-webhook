@@ -1,4 +1,4 @@
-FROM mhart/alpine-node:8
+FROM mhart/alpine-node:14
 RUN apk update && apk upgrade && apk add curl bash git
 RUN npm install -g npm
 
