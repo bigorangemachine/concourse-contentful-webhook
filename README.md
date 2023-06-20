@@ -12,12 +12,12 @@ Setup for the first time
 docker build . #build the docker file
 docker image ls # get the docker sha
 docker run -i -t <DOCKER-IMAGE-ID> /bin/ash # run interactive
-docker build -t concourse-contentful-webhooks:v1 .
+docker build -t concourse-contentful-webhook:v1 .
 docker ps -a # get the docker container id
-docker commit -m "first commit" -a "comicrelief" <DOCKER-CONTAINER-ID> comicrelief/concourse-contentful-webhooks
-docker push comicrelief/concourse-contentful-webhooks
-docker tag <DOCKER-IMAGE-ID> comicrelief/concourse-contentful-webhooks:v1
-docker push comicrelief/concourse-contentful-webhooks:v1
+docker commit -m "first commit" -a "comicrelief" <DOCKER-CONTAINER-ID> comicrelief/concourse-contentful-webhook
+docker push comicrelief/concourse-contentful-webhook
+docker tag <DOCKER-IMAGE-ID> comicrelief/concourse-contentful-webhook:v1
+docker push comicrelief/concourse-contentful-webhook:v1
 ```
 
 ## Build Dockerfile
@@ -115,7 +115,7 @@ resource_types:
   - name: concourse-contentful-webhooks
     type: docker-image
     source:
-      repository: comicrelief/concourse-contentful-webhooks
+      repository: comicrelief/concourse-contentful-webhook
 ...
 ```
 
@@ -125,7 +125,7 @@ resource_types:
 resources:
 ...
   - name: contentful-hook
-    type: concourse-contentful-webhooks
+    type: concourse-contentful-webhook
     webhook_token: <Some-Secret>
 ...
 ```
@@ -147,7 +147,7 @@ resource_types:
   - name: concourse-contentful-webhooks
     type: docker-image
     source:
-      repository: comicrelief/concourse-contentful-webhooks
+      repository: comicrelief/concourse-contentful-webhook
 
 resources:
   - name: contentful-hook
