@@ -14,22 +14,55 @@ jsonStdin()
       accessToken: accessToken
     });
 
-    return contentfulClient.getEntries({ order: '-sys.updatedAt', limit: 1 })
-      .then((response) => {
+    // As this is only set the CRcom review context
+    const isContentReview = result.source['content-review'] || result.source.content_review;
+
+    if (isContentReview) {
+      console.log('content-review:')
+      return contentfulClient.getEntries({
+        // See https://www.contentfulcommunity.com/t/how-to-query-on-multiple-content-types/473 and
+        // https://www.contentful.com/faq/apis/#:~:text=You%20could-,use,-the%20inclusion%20operator
+        'sys.contentType.sys.id[in]': 'newsArticle,person,pagePartner,pageDefault,landingPage'
+      }).then((response) => {
         const highestRevision = response.items.reverse()[0]; // highest 'sys.revision' first
         const updatedTimestamp = Date.parse(highestRevision.sys.updatedAt);
 
+        if(Boolean(response.items.length)) {
+          jsonStdout([{
+            timestamp: highestRevision.sys.updatedAt,
+            revisionNum: updatedTimestamp.toString(),
+            spaceId,
+            environment: contentfulEnv,
+            contentToReview: JSON.stringify(response.items),
+          }]);
+        } else {
+          jsonStdout([{
+            timestamp: highestRevision.sys.updatedAt,
+            revisionNum: updatedTimestamp.toString(),
+            spaceId,
+            environment: contentfulEnv,
+            contentReview: 'testing-content--no-content',
+          }]);
+        }
+      });
+    } else {
+      return contentfulClient.getEntries({ order: '-sys.updatedAt', limit: 1 })
+      .then((response) => {
+        const highestRevision = response.items.reverse()[0]; // highest 'sys.revision' first
+        const updatedTimestamp = Date.parse(highestRevision.sys.updatedAt);
         if(!result.version || parseInt(result.version.revisionNum) < updatedTimestamp) {
           jsonStdout([{
             timestamp: highestRevision.sys.updatedAt,
             revisionNum: updatedTimestamp.toString(),
             spaceId,
-            environment: contentfulEnv
+            environment: contentfulEnv,
+            contentReview: 'testing-content--false',
           }]);
         } else {
           jsonStdout([]);
         }
       });
+    }
   })
   .catch((err) => {
     // logError(err);
