@@ -24,10 +24,16 @@ jsonStdin()
         // https://www.contentful.com/faq/apis/#:~:text=You%20could-,use,-the%20inclusion%20operator
         'sys.contentType.sys.id[in]': 'newsArticle,person,pagePartner,pageDefault,landingPage'
       }).then((response) => {
+        const highestRevision = response.items.reverse()[0]; // highest 'sys.revision' first
+        const updatedTimestamp = Date.parse(highestRevision.sys.updatedAt);
+
         if(Boolean(response.items.length)) {
           jsonStdout([{
-            stuffToReview: JSON.stringify(response.items),
-            contentReview: 'testing-content--some-content',
+            timestamp: highestRevision.sys.updatedAt,
+            revisionNum: updatedTimestamp.toString(),
+            spaceId,
+            environment: contentfulEnv,
+            contentToReview: JSON.stringify(response.items),
           }]);
         } else {
           jsonStdout([{
@@ -36,7 +42,6 @@ jsonStdin()
             spaceId,
             environment: contentfulEnv,
             contentReview: 'testing-content--no-content',
-            stuffToReview: "nothing to see"
           }]);
         }
       });
@@ -45,7 +50,6 @@ jsonStdin()
       .then((response) => {
         const highestRevision = response.items.reverse()[0]; // highest 'sys.revision' first
         const updatedTimestamp = Date.parse(highestRevision.sys.updatedAt);
-
         if(!result.version || parseInt(result.version.revisionNum) < updatedTimestamp) {
           jsonStdout([{
             timestamp: highestRevision.sys.updatedAt,
@@ -55,10 +59,7 @@ jsonStdin()
             contentReview: 'testing-content--false',
           }]);
         } else {
-          jsonStdout([{
-            notExactlySure: 'what-is-going-on',
-            contentReview: 'testing-content--false',
-          }]);
+          jsonStdout([]);
         }
       });
     }

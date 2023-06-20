@@ -157,5 +157,3 @@ resources:
       space-id: zxx111222333
       access-token: 1010ffeebbccddee00112233445566778899aabbccddeeff0011223344556677
 ```
-
-Trivial update.
