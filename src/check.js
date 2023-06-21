@@ -23,25 +23,33 @@ jsonStdin()
         // https://www.contentful.com/faq/apis/#:~:text=You%20could-,use,-the%20inclusion%20operator
         'sys.contentType.sys.id[in]': 'newsArticle,person,pagePartner,pageDefault,landingPage'
       }).then((response) => {
+        let itemsToReview = [];
+
+        response.items.forEach((item) => {
+          if (item.fields.reviewDate) {
+            itemsToReview.push({
+              pageTitle: item.fields.title || item.fields.name, // As theres no solid standard across these content types
+              pagePath: item.fields.path,
+              dateToReview: item.fields.reviewDate,
+              contentType: item.sys.contentType.sys.id,
+            });
+          }
+        });
+
         const highestRevision = response.items.reverse()[0]; // highest 'sys.revision' first
         const updatedTimestamp = Date.parse(highestRevision.sys.updatedAt);
 
-        if(Boolean(response.items.length)) {
+        if(Boolean(itemsToReview.length)) {
+          const itemsToReviewString = JSON.stringify(itemsToReview);
           jsonStdout([{
             timestamp: highestRevision.sys.updatedAt,
             revisionNum: updatedTimestamp.toString(),
             spaceId,
             environment: contentfulEnv,
-            contentToReview: JSON.stringify(response.items),
+            itemsToReview: itemsToReviewString,
           }]);
         } else {
-          jsonStdout([{
-            timestamp: highestRevision.sys.updatedAt,
-            revisionNum: updatedTimestamp.toString(),
-            spaceId,
-            environment: contentfulEnv,
-            contentReview: 'testing-content--no-content',
-          }]);
+          jsonStdout([]);
         }
       });
     } else {
@@ -55,7 +63,6 @@ jsonStdin()
             revisionNum: updatedTimestamp.toString(),
             spaceId,
             environment: contentfulEnv,
-            contentReview: 'testing-content--false',
           }]);
         } else {
           jsonStdout([]);

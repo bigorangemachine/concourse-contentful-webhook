@@ -14,9 +14,11 @@ const jsonStdin = () => {
     });
   });
 };
+
 const jsonStdout = (val) => {
   process.stdout.write(JSON.stringify(val));
 }
+
 const logError = (val) => {
   process.stderr.write(val.toString() + "\n");
 }
