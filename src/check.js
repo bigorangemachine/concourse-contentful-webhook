@@ -19,34 +19,28 @@ jsonStdin()
 
     if (isContentReview) {
       return contentfulClient.getEntries({
-        // See https://www.contentfulcommunity.com/t/how-to-query-on-multiple-content-types/473 and
-        // https://www.contentful.com/faq/apis/#:~:text=You%20could-,use,-the%20inclusion%20operator
         'sys.contentType.sys.id[in]': 'newsArticle,person,pagePartner,pageDefault,landingPage'
       }).then((response) => {
-        let itemsToReview = [];
+        let itemsToReview = false;
 
         response.items.forEach((item) => {
+          // Update the flag if we find ANY review dates (date checking and calculation itself happens via a Concourse job)
           if (item.fields.reviewDate) {
-            itemsToReview.push({
-              pageTitle: item.fields.title || item.fields.name, // As theres no solid standard across these content types
-              pagePath: item.fields.path,
-              dateToReview: item.fields.reviewDate,
-              contentType: item.sys.contentType.sys.id,
-            });
+            itemsToReview = true;
           }
         });
 
-        const highestRevision = response.items.reverse()[0]; // highest 'sys.revision' first
-        const updatedTimestamp = Date.parse(highestRevision.sys.updatedAt);
-
-        if(Boolean(itemsToReview.length)) {
-          const itemsToReviewString = JSON.stringify(itemsToReview);
+        if(itemsToReview) {
+          // Keeping these in place as it's useful info
+          const highestRevision = response.items.reverse()[0]; // highest 'sys.revision' first
+          const updatedTimestamp = Date.parse(highestRevision.sys.updatedAt);
+          
           jsonStdout([{
             timestamp: highestRevision.sys.updatedAt,
             revisionNum: updatedTimestamp.toString(),
             spaceId,
             environment: contentfulEnv,
-            itemsToReview: itemsToReviewString,
+            itemsToReview
           }]);
         } else {
           jsonStdout([]);
