@@ -21,16 +21,16 @@ jsonStdin()
       return contentfulClient.getEntries({
         'sys.contentType.sys.id[in]': 'newsArticle,person,pagePartner,pageDefault,landingPage'
       }).then((response) => {
-        let itemsToReview = false;
+        let itemTally = 0;
 
         response.items.forEach((item) => {
           // Update the flag if we find ANY review dates (date checking and calculation itself happens via a Concourse job)
           if (item.fields.reviewDate) {
-            itemsToReview = true;
+            itemTally += 1;
           }
         });
 
-        if(itemsToReview) {
+        if(itemTally > 0) {
           // Keeping these in place as it's useful info
           const highestRevision = response.items.reverse()[0]; // highest 'sys.revision' first
           const updatedTimestamp = Date.parse(highestRevision.sys.updatedAt);
@@ -40,7 +40,7 @@ jsonStdin()
             revisionNum: updatedTimestamp.toString(),
             spaceId,
             environment: contentfulEnv,
-            itemsToReview
+            itemsToReview: itemTally
           }]);
         } else {
           jsonStdout([]);
