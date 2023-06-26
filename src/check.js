@@ -34,13 +34,14 @@ jsonStdin()
           // Keeping these in place as it's useful info
           const highestRevision = response.items.reverse()[0]; // highest 'sys.revision' first
           const updatedTimestamp = Date.parse(highestRevision.sys.updatedAt);
-          
+          const timeNow = new Date().getTime();
+
           jsonStdout([{
             timestamp: highestRevision.sys.updatedAt,
-            revisionNum: updatedTimestamp.toString(),
+            revisionNum: timeNow.toString(), // To ensure each weekly run triggers the check
             spaceId,
             environment: contentfulEnv,
-            itemsToReview: itemTally
+            itemsToReview: itemTally.toString(),
           }]);
         } else {
           jsonStdout([]);
