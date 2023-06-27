@@ -14,56 +14,22 @@ jsonStdin()
       accessToken: accessToken
     });
 
-    // As this is only set the CRcom review context
-    const isContentReview = result.source['content-review'] || result.source.content_review;
-
-    if (isContentReview) {
-      return contentfulClient.getEntries({
-        'sys.contentType.sys.id[in]': 'newsArticle,person,pagePartner,pageDefault,landingPage'
-      }).then((response) => {
-        let itemTally = 0;
-
-        response.items.forEach((item) => {
-          // Update the flag if we find ANY review dates (date checking and calculation itself happens via a Concourse job)
-          if (item.fields.reviewDate) {
-            itemTally += 1;
-          }
-        });
-
-        if(itemTally > 0) {
-          // Keeping these in place as it's useful info
-          const highestRevision = response.items.reverse()[0]; // highest 'sys.revision' first
-          const updatedTimestamp = Date.parse(highestRevision.sys.updatedAt);
-          const timeNow = new Date().getTime();
-
-          jsonStdout([{
-            timestamp: highestRevision.sys.updatedAt,
-            revisionNum: timeNow.toString(), // To ensure each weekly run triggers the check
-            spaceId,
-            environment: contentfulEnv,
-            itemsToReview: itemTally.toString(),
-          }]);
-        } else {
-          jsonStdout([]);
-        }
-      });
-    } else {
-      return contentfulClient.getEntries({ order: '-sys.updatedAt', limit: 1 })
+    return contentfulClient.getEntries({ order: '-sys.updatedAt', limit: 1 })
       .then((response) => {
         const highestRevision = response.items.reverse()[0]; // highest 'sys.revision' first
         const updatedTimestamp = Date.parse(highestRevision.sys.updatedAt);
+
         if(!result.version || parseInt(result.version.revisionNum) < updatedTimestamp) {
           jsonStdout([{
             timestamp: highestRevision.sys.updatedAt,
             revisionNum: updatedTimestamp.toString(),
             spaceId,
-            environment: contentfulEnv,
+            environment: contentfulEnv
           }]);
         } else {
           jsonStdout([]);
         }
       });
-    }
   })
   .catch((err) => {
     // logError(err);
